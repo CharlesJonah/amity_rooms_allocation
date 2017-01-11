@@ -98,7 +98,7 @@ class ScreenOut (cmd.Cmd):
         """Usage: load_state """
 
         amity.load_state()
-
+    
 
 
 

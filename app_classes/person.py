@@ -4,7 +4,8 @@ class Person(object):
 		self.name = name
 		self.role = role
 		self.wants_accomodation = wants_accomodation
-		self.rooms_allocated = []
+		self.office_allocated = ''
+		self.living_space_allocated = ''
 
 #Class Staff inherits from model
 class Staff(Person):

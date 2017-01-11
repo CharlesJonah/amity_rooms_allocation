@@ -1,5 +1,4 @@
 import sys
-# sys.path.append('./app_classes')
 from person import Staff, Fellow
 from rooms import Office, Living_Space
 import random
@@ -13,23 +12,46 @@ class Amity(object):
 		self.all_rooms_living = []
 		self.available_living_space = []
 		self.available_offices = []
+		self.input_file = 'files/people.txt'
+
+	def load_state(self):
+		try:
+			with open(self.input_file) as people_file:
+				people = people_file.readlines()
+				if len(people) == 0:
+					print('The file has no contents')
+				else:
+					for line in people:
+						line.replace(r'\n',' ')
+						person = line.split(' ')
+						if len(person) < 4:
+							wants_accomodation = 'N'
+							name = person[0] + " " + person[1]
+							role = 'STAFF'
+							self.add_person(name, role, wants_accomodation)
+						else:
+							wants_accomodation = 'Y'
+							name = person[0] + " " + person[1]
+							role = 'FELLOW'
+							self.add_person(name, role, wants_accomodation)
+							
+		except Exception as e:
+			e = str(e)
+			print ('Oops! The system failed to read the file' + e)
+							
 	def func_office_available(self):
+		del self.available_offices[:]
 		for available_off in self.all_rooms_office:
-			if(available_off.check_availability):
+			if(available_off.check_availability()):
 				self.available_offices.append(available_off)
-			else:
-				print('No available offices')
-				return('No available offices')
-				break
+				
+
 	def func_available_living_space(self):
+		del self.available_living_space[:]
 		for available_liv in self.all_rooms_living:
-			if(available_liv.check_availability):
+			if(available_liv.check_availability()):
 				self.available_living_space.append(available_liv)
-			else:
-				print('No available living spaces')
-				return 'No available living spaces'
-				break
-		
+				
 	def add_person(self, name, role, wants_accomodation):
 		name = name
 		role = role.upper()
@@ -44,14 +66,22 @@ class Amity(object):
 			print('Another user exists with the same name')
 			return 'Another user exists with the same name'
 		else:
+			random_office = None
+			random_living_space = None
+			self.func_office_available()
+			self.func_available_living_space()
 			if role == 'STAFF':
 				if wants_accomodation == 'N':
 					if len(self.all_rooms_office) == 0:
 							print("Please create offices first.")
 					else:
-						self.func_office_available()
-						random_office = random.choice(self.available_offices)
-						self.add_person_office(name, role, wants_accomodation,random_office)
+						if len(self.available_offices) == 0:
+							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							print('You have been added to the system but no Office or Living Space was allocated.')	
+						else:
+							random_office = random.choice(self.available_offices)
+							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							print('You have been allocated a Office successfully.')
 				elif wants_accomodation =='Y':
 					print('No accomodation for staff')
 					return 'No accomodation for staff'
@@ -63,18 +93,34 @@ class Amity(object):
 					if len(self.all_rooms_office) == 0:
 						print("Please create offices first.")
 					else:
-						self.func_office_available()
-						random_office = random.choice(self.available_offices)
-						self.add_person_office(name, role, wants_accomodation,random_office)
+						if len(self.available_offices) == 0:
+							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							print('You have been added to the system but no Office or Living Space was allocated.')
+						else:
+							random_office = random.choice(self.available_offices)
+							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							print('You have been allocated a Office successfully.')
 				elif wants_accomodation == 'Y':
 					if len(self.all_rooms_office) == 0 or len(self.all_rooms_living) == 0:
 						print("Please create offices and living_spaces first.")
 					else:
-						self.func_available_living_space()
-						self.func_office_available()
-						random_office = random.choice(self.available_offices)
-						random_living_space = random.choice(self.available_living_space)
-						self.add_person_office_wants_accomodation(name, role, wants_accomodation,random_office,random_living_space)
+						if len(self.available_offices) == 0:
+							if len(self.available_living_space) == 0:
+								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								print('You have been added to the system but no Office or Living Space was allocated.')
+							else:
+								random_living_space = random.choice(self.available_living_space)
+								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								print('You have been added to the system. You were only booked for accomodation.')
+						else:
+							random_office = random.choice(self.available_offices)
+							if len(self.available_living_space) == 0:
+								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								print('You have been allocated a Office successfully. Accomodation is still unavailable')
+							else:
+								random_living_space = random.choice(self.available_living_space)
+								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								print('You have been allocated a Office and a Living Space successfully')
 				else:
 					print('No such option. Use either Y or N')
 					return 'No such option. Use either Y or N'
@@ -82,37 +128,39 @@ class Amity(object):
 			else:
 				print('Your role is undefined')
 				return('Your role is undefined')
-	def add_person_office_wants_accomodation(self, name, role, wants_accomodation,random_office,random_living_space):
-		fellow = Fellow(name,role,wants_accomodation)
-		self.all_people.append(fellow)
-		random_office.allocated_members.append(name)
-		fellow.rooms_allocated.append(random_office.room_name)
-		fellow.rooms_allocated.append(random_living_space.room_name)
-		print(fellow.name)
-		print(random_office.room_name)
-		print(random_office.allocated_members)
-		print(fellow.rooms_allocated)
-							
-	def add_person_office(self, name, role, wants_accomodation,random_office):
+						
+	def add_person_all_people(self, name, role, wants_accomodation,random_office,random_living_space):
 		if role == 'STAFF':
 			staff = Staff(name,role,wants_accomodation)
 			self.all_people.append(staff)
-			random_office.allocated_members.append(name)
-			staff.rooms_allocated.append(random_office.room_name)
-			print(staff.name)
-			print(random_office.room_name)
-			print(random_office.allocated_members)
-			print(staff.rooms_allocated)
+			staff.living_space_allocated = None
+			if random_office == None:
+				staff.office_allocated = None
+			else:
+				random_office.allocated_members.append(name)
+				staff.office_allocated = random_office.room_name
+		
 		else:
 			fellow = Fellow(name,role,wants_accomodation)
 			self.all_people.append(fellow)
-			random_office.allocated_members.append(name)
-			fellow.rooms_allocated.append(random_office.room_name)
-			print(fellow.name)
-			print(random_office.room_name)
-			print(random_office.allocated_members)
-			print(fellow.rooms_allocated)
-				
+			if random_office == None:
+				if random_living_space == None:
+					fellow.office_allocated = None
+					fellow.living_space_allocated = None
+				else:
+					fellow.living_space_allocated = random_living_space.room_name
+					random_living_space.allocated_members.append(name)
+			else:
+				if random_living_space == None:
+					random_office.allocated_members.append(name)
+					fellow.office_allocated = random_office.room_name
+					fellow.living_space_allocated = None
+				else:
+					random_office.allocated_members.append(name)
+					random_living_space.allocated_members.append(name)
+					fellow.living_space_allocated = random_living_space.room_name
+					fellow.office_allocated = random_office.room_name
+						
 	#Fuction for creating rooms
 	def  create_room(self, room_name):
 		room_type = room_name[-1]
