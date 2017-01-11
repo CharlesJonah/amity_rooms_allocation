@@ -13,8 +13,26 @@ class Amity(object):
 		self.available_living_space = []
 		self.available_offices = []
 		self.input_file = 'files/people.txt'
+	def save_state(self):
+		for i in self.all_people:
+			print(i.name)
+			print(i.role)
+			print(i.wants_accomodation)
+			print(i.office_allocated)
+			print(i.living_space_allocated)
+			
+		print('=================================')
+		for i in self.all_rooms_living:
+			print(i.room_name)
+			print(i.allocated_members)
+			print(i.room_type)
+		print('=================================')
+		for i in self.all_rooms_office:
+			print(i.room_name)
+			print(i.allocated_members)
+			print(i.room_type)
 
-	def load_state(self):
+	def load_people(self):
 		try:
 			with open(self.input_file) as people_file:
 				people = people_file.readlines()
@@ -22,17 +40,17 @@ class Amity(object):
 					print('The file has no contents')
 				else:
 					for line in people:
-						line.replace(r'\n',' ')
+						line = line.replace('\n','')
 						person = line.split(' ')
 						if len(person) < 4:
 							wants_accomodation = 'N'
 							name = person[0] + " " + person[1]
-							role = 'STAFF'
+							role = person[2]
 							self.add_person(name, role, wants_accomodation)
 						else:
 							wants_accomodation = 'Y'
 							name = person[0] + " " + person[1]
-							role = 'FELLOW'
+							role = person[2]
 							self.add_person(name, role, wants_accomodation)
 							
 		except Exception as e:
@@ -55,7 +73,7 @@ class Amity(object):
 	def add_person(self, name, role, wants_accomodation):
 		name = name
 		role = role.upper()
-		wants_accomodation = wants_accomodation
+		wants_accomodation = wants_accomodation.upper()
 		person_exists = []
 		available_offices = []
 		available_living_space = []
@@ -111,12 +129,12 @@ class Amity(object):
 							else:
 								random_living_space = random.choice(self.available_living_space)
 								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
-								print('You have been added to the system. You were only booked for accomodation.')
+								print('You have been added to the system. You were allocated a Living space only.')
 						else:
 							random_office = random.choice(self.available_offices)
 							if len(self.available_living_space) == 0:
 								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
-								print('You have been allocated a Office successfully. Accomodation is still unavailable')
+								print('You have been allocated a Office successfully. Living space is still unavailable')
 							else:
 								random_living_space = random.choice(self.available_living_space)
 								self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
@@ -174,6 +192,7 @@ class Amity(object):
 				room_exists_list_office.append(i.room_name)
 			for i in room_name_list_office:
 				if i in room_exists_list_office:
+					print('One of the rooms entered exits')
 					return 'One of the rooms entered exits'
 					break
 				else:	
@@ -190,6 +209,7 @@ class Amity(object):
 				room_exists_list_living.append(i.room_name)
 			for i in room_name_list_living:
 				if i in room_exists_list_living:
+					print('One of the rooms entered exits')
 					return 'One of the rooms entered exits'
 					break
 				else:
@@ -199,5 +219,3 @@ class Amity(object):
 				print(room.room_name)
 		else:
 			print('You can only create OFFICE or a LIVING_SPACE')
-	
-	

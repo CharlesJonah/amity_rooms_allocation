@@ -15,8 +15,8 @@ class AmityTest(unittest.TestCase):
 		total_people = len(self.amity.all_people)
 		self.assertEqual(len(self.amity.all_people), 0)
 		self.amity.create_room(['SHIRE','OFFICE'])
-		self.amity.add_person('Charles','Fellow','Y','OFFICE')
-		self.amity.add_person('Eric','Fellow','Y','OFFICE')
+		self.amity.add_person('Charles','Fellow','Y')
+		self.amity.add_person('Eric','Fellow','Y')
 		total_people = len(self.amity.all_people)
 		self.assertEqual(len(self.amity.all_people), total_people)
 	

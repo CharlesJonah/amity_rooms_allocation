@@ -6,7 +6,7 @@ Usage:
     rooms_app create_room <room_name>...
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
     rooms_app save_state
-    rooms_app load_state
+    rooms_app load_people
 
 
 
@@ -94,10 +94,10 @@ class ScreenOut (cmd.Cmd):
         amity.save_state()
 
     @docopt_cmd
-    def do_load_state(self,arg):
-        """Usage: load_state """
+    def do_load_people(self,arg):
+        """Usage: load_people """
 
-        amity.load_state()
+        amity.load_people()
     
 
 
