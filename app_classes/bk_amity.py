@@ -48,7 +48,7 @@ class Amity(object):
 							role = person[2]
 							self.add_person(name, role, wants_accomodation)
 						else:
-							wants_accomodation = person[3]
+							wants_accomodation = 'Y'
 							name = person[0] + " " + person[1]
 							role = person[2]
 							self.add_person(name, role, wants_accomodation)
@@ -71,6 +71,7 @@ class Amity(object):
 				self.available_living_space.append(available_liv)
 				
 	def add_person(self, name, role, wants_accomodation):
+        pass
 		name = name
 		role = role.upper()
 		wants_accomodation = wants_accomodation.upper()
@@ -79,7 +80,7 @@ class Amity(object):
 		available_living_space = []
 
 		for p_exists in self.all_people:
-			person_exists.append(p_exists.name)
+					person_exists.append(p_exists.name)
 		if name in person_exists:
 			print('Another user exists with the same name')
 			return 'Another user exists with the same name'
@@ -110,7 +111,6 @@ class Amity(object):
 				if wants_accomodation == 'N':
 					if len(self.all_rooms_office) == 0:
 						print("Please create offices first.")
-						return "Please create offices first."
 					else:
 						if len(self.available_offices) == 0:
 							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
@@ -122,7 +122,6 @@ class Amity(object):
 				elif wants_accomodation == 'Y':
 					if len(self.all_rooms_office) == 0 or len(self.all_rooms_living) == 0:
 						print("Please create offices and living_spaces first.")
-						return "Please create offices and living_spaces first."
 					else:
 						if len(self.available_offices) == 0:
 							if len(self.available_living_space) == 0:
@@ -190,15 +189,15 @@ class Amity(object):
 			room_name_list_office = room_name
 			del room_name_list_office[-1]
 			room_exists_list_office = []
-			for office in self.all_rooms_office:
-				room_exists_list_office.append(office.room_name)
-			for office in room_name_list_office:
-				if office in room_exists_list_office:
+			for i in self.all_rooms_office:
+				room_exists_list_office.append(i.room_name)
+			for i in room_name_list_office:
+				if i in room_exists_list_office:
 					print('One of the rooms entered exits')
 					return 'One of the rooms entered exits'
 					break
 				else:	
-					office = Office(office,room_type)
+					office = Office(i,room_type)
 					self.all_rooms_office.append(office)
 			for room in self.all_rooms_office:
 				print(room.room_name)
@@ -207,18 +206,17 @@ class Amity(object):
 			room_name_list_living = room_name
 			room_exists_list_living = []
 			del room_name_list_living[-1]
-			for room in self.all_rooms_living:
-				room_exists_list_living.append(room.room_name)
-			for room in room_name_list_living:
-				if room in room_exists_list_living:
+			for i in self.all_rooms_living:
+				room_exists_list_living.append(i.room_name)
+			for i in room_name_list_living:
+				if i in room_exists_list_living:
 					print('One of the rooms entered exits')
 					return 'One of the rooms entered exits'
 					break
 				else:
-					living = Living_Space(room,room_type)
+					living = Living_Space(i,room_type)
 					self.all_rooms_living.append(living)
 			for room in self.all_rooms_living:
 				print(room.room_name)
 		else:
 			print('You can only create OFFICE or a LIVING_SPACE')
-			return 'You can only create OFFICE or a LIVING_SPACE'

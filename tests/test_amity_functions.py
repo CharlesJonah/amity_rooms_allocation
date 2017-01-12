@@ -2,46 +2,118 @@ import unittest
 import sys
 sys.path.append('./app_classes')
 from amity import Amity
-#Main Testing class
-class AmityTest(unittest.TestCase):
-	#Setup for class initializations
+#Tests under add_person functions
+class AmityTest_AddPerson(unittest.TestCase):
+		
+	"Setup for class initializations"
 	def setUp(self):
 		self.amity = Amity()
-	
-	#Tests under add_person function
 
 	def test_add_person(self):
 		"Test that person is added"
-		total_people = len(self.amity.all_people)
-		self.assertEqual(len(self.amity.all_people), 0)
+		add_person = self.amity.add_person('Charles','Fellow','Y')
+		self.assertEqual(add_person, 'Please create offices and living_spaces first.')
 		self.amity.create_room(['SHIRE','OFFICE'])
-		self.amity.add_person('Charles','Fellow','Y')
-		self.amity.add_person('Eric','Fellow','Y')
-		total_people = len(self.amity.all_people)
-		self.assertEqual(len(self.amity.all_people), total_people)
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		self.amity.add_person('Charles','STAFF','N')
+		self.assertEqual(len(self.amity.all_people), 1)
+
+	def test_person_exists(self):
+		"Test if the person exists"
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		add_person = self.amity.add_person('Charles','Fellow','Y')
+		add_person = self.amity.add_person('Charles','Fellow','Y')
+		self.assertEqual(add_person, 'Another user exists with the same name')
+
+	def test_rooms_adding_fellow_with_accomodation(self):
+		"Tests if there are living rooms and offices before adding a fellow who wants accomodation"
+		add_person = self.amity.add_person('Charles','Fellow','Y')
+		self.assertEqual(add_person, 'Please create offices and living_spaces first.')
+
+	def test_rooms_adding_fellow_without_accomodation(self):
+		"Tests if there are office before adding fellow without accomodation"
+		add_person = self.amity.add_person('Charles','Fellow','N')
+		self.assertEqual(add_person, 'Please create offices first.')
 	
-	def test_create_room(self):
-		 "Test for adding offices"
-		 total_rooms = len(self.amity.all_rooms_office)
-		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
-		 self.amity.create_room(['SHIRE','CARMELOT','HOGWARTS','OFFICE'])
-		 total_rooms = len(self.amity.all_rooms_office)
-		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+	def test_fellow_added_without_office_and_living_space(self):
+		"Tests if fellow is added without office and living space"
+	
+	def test_staff_wants_accomodation(self):
+		"Tests if the system denies staff accomodation."
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		add_person = self.amity.add_person('Charles','STAFF','Y')
+		self.assertEqual(add_person, 'No accomodation for staff')
+	
+	def test_if_optional_wants_accomodation_is_valid(self):
+		"Tests if optional argument for add_person is Y or N"
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		add_person = self.amity.add_person('Charles','STAFF','R')
+		self.assertEqual(add_person, 'No such option. Use either Y or N')
+	
+	def test_if_role_is_valid(self):
+		"Tests if the role is either staff or fellow "
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		add_person = self.amity.add_person('Charles','STAF','N')
+		self.assertEqual(add_person, 'Your role is undefined')
+		
+class AmityTest_CreateRoom(unittest.TestCase):
+		
+	"Setup for class initializations"
+	def setUp(self):
+		self.amity = Amity()
+		
+	"Test for create_room room fuctions"
+	def test_if_room_is_office_or_living_space(self):
+		"Tests if the type of room given is either a living space or an office"
+		add_room = self.amity.create_room(['SHIRE','OFFIC'])
+		self.assertEqual(add_room, 'You can only create OFFICE or a LIVING_SPACE')
 
-		 "Test for adding living_spaces"
-		 total_rooms = len(self.amity.all_rooms_office)
-		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
-		 self.amity.create_room(['R','RUBY','BLOCKCHAIN','LIVING_SPACE'])
-		 total_rooms = len(self.amity.all_rooms_office)
-		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+	def tests_if_office_roomname_exists(self):
+		"Tests that if office room name exists"
+		add_room = self.amity.create_room(['SHIRE','OFFICE'])
+		add_room = self.amity.create_room(['SHIRE','OFFICE'])
+		self.assertEqual(add_room, 'One of the rooms entered exits')
 
-		 "Test if a room is added more than once"
-		 test_add_living_twice = self.amity.create_room(['RUBY','LIVING_SPACE'])
-		 self.assertEqual(test_add_living_twice, "One of the rooms entered exits")
+	def tests_if_living_space_exists(self):
+		"Tests if living space name does not exist"
+		add_room = self.amity.create_room(['RUBY','LIVING_SPACE'])
+		add_room = self.amity.create_room(['RUBY','LIVING_SPACE'])
+		self.assertEqual(add_room, 'One of the rooms entered exits')
 
-		 "Test if a room is added more than once"
-		 test_add_office_twice = self.amity.create_room(['CARMELOT','OFFICE'])
-		 self.assertEqual(test_add_office_twice, "One of the rooms entered exits")
+
+		
+
+
+# 	def setUp(self):
+#     	"Setup for class initializations"
+# 		self.amity = Amity()
+
+# 	def test_create_room(self):
+# 		 "Test for adding offices"
+# 		 total_rooms = len(self.amity.all_rooms_office)
+# 		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+# 		 self.amity.create_room(['SHIRE','CARMELOT','HOGWARTS','OFFICE'])
+# 		 total_rooms = len(self.amity.all_rooms_office)
+# 		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+
+# 		 "Test for adding living_spaces"
+# 		 total_rooms = len(self.amity.all_rooms_office)
+# 		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+# 		 self.amity.create_room(['R','RUBY','BLOCKCHAIN','LIVING_SPACE'])
+# 		 total_rooms = len(self.amity.all_rooms_office)
+# 		 self.assertEqual(len(self.amity.all_rooms_office), total_rooms)
+
+# 		 "Test if a room is added more than once"
+# 		 test_add_living_twice = self.amity.create_room(['RUBY','LIVING_SPACE'])
+# 		 self.assertEqual(test_add_living_twice, "One of the rooms entered exits")
+
+# 		 "Test if a room is added more than once"
+# 		 test_add_office_twice = self.amity.create_room(['CARMELOT','OFFICE'])
+# 		 self.assertEqual(test_add_office_twice, "One of the rooms entered exits")
 
 
 
