@@ -6,7 +6,7 @@ Usage:
     rooms_app create_room <room_name>...
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
     rooms_app save_state
-    rooms_app load_people
+    rooms_app load_people <file_path>
 
 
 
@@ -66,39 +66,32 @@ class ScreenOut (cmd.Cmd):
     #The prompt that shows the use that he or she is running form the application in the cmd
     prompt = '<rooms_app> '
 
-
-
     @docopt_cmd
     def do_add_person(self, args):
         """Usage: add_person <person_name> <role> <wants_accommodation>"""
-        
         amity.add_person(args['<person_name>'],args['<role>'],args['<wants_accommodation>'])
 
     # This cmd links to the search() method
     @docopt_cmd
     def do_create_room(self, args):
         """Usage: create_room <room_name>..."""
-
         amity.create_room(args['<room_name>'])
 
     @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_identifier> <room_name> <room_type>"""
-
         amity.reallocate_person(args['<person_identifier>'],args['<room_name>'],args['<room_type>'])
 
     @docopt_cmd
     def do_save_state(self,arg):
         """Usage: save_state """
-
         amity.save_state()
 
     @docopt_cmd
-    def do_load_people(self,arg):
-        """Usage: load_people """
+    def do_load_people(self,args):
+        """Usage: load_people <file_path>"""
+        amity.load_people(args['<file_path>'])
 
-        amity.load_people()
-    
 
 
 

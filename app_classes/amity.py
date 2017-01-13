@@ -1,18 +1,19 @@
 import sys
+import os
 from person import Staff, Fellow
 from rooms import Office, Living_Space
 import random
 
 #Main class Amity
 class Amity(object):
-	
+
 	def __init__(self):
 		self.all_people = []
 		self.all_rooms_office = []
 		self.all_rooms_living = []
 		self.available_living_space = []
 		self.available_offices = []
-		self.input_file = 'files/people.txt'
+		self.input_file = ''
 	def save_state(self):
 		for i in self.all_people:
 			print(i.name)
@@ -20,7 +21,7 @@ class Amity(object):
 			print(i.wants_accomodation)
 			print(i.office_allocated)
 			print(i.living_space_allocated)
-			
+
 		print('=================================')
 		for i in self.all_rooms_living:
 			print(i.room_name)
@@ -32,12 +33,17 @@ class Amity(object):
 			print(i.allocated_members)
 			print(i.room_type)
 
-	def load_people(self):
+	def load_people(self,file_path):
 		try:
+			self.input_file = file_path
+			if not os.path.isfile(self.input_file):
+				print("Invalid filepath.")
+				return "Invalid filepath."
 			with open(self.input_file) as people_file:
 				people = people_file.readlines()
 				if len(people) == 0:
 					print('The file has no contents')
+					return 'The file has no contents'
 				else:
 					for line in people:
 						line = line.replace('\n','')
@@ -52,24 +58,24 @@ class Amity(object):
 							name = person[0] + " " + person[1]
 							role = person[2]
 							self.add_person(name, role, wants_accomodation)
-							
+
 		except Exception as e:
-			e = str(e)
-			print ('Oops! The system failed to read the file' + e)
-							
+			print ('Oops! The system failed to read the file')
+			return 'Oops! The system failed to read the file'
+
 	def func_office_available(self):
 		del self.available_offices[:]
 		for available_off in self.all_rooms_office:
 			if(available_off.check_availability()):
 				self.available_offices.append(available_off)
-				
+
 
 	def func_available_living_space(self):
 		del self.available_living_space[:]
 		for available_liv in self.all_rooms_living:
 			if(available_liv.check_availability()):
 				self.available_living_space.append(available_liv)
-				
+
 	def add_person(self, name, role, wants_accomodation):
 		name = name
 		role = role.upper()
@@ -95,7 +101,7 @@ class Amity(object):
 					else:
 						if len(self.available_offices) == 0:
 							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
-							print('You have been added to the system but no Office or Living Space was allocated.')	
+							print('You have been added to the system but no Office or Living Space was allocated.')
 						else:
 							random_office = random.choice(self.available_offices)
 							self.add_person_all_people(name, role, wants_accomodation,random_office,random_living_space)
@@ -144,11 +150,11 @@ class Amity(object):
 				else:
 					print('No such option. Use either Y or N')
 					return 'No such option. Use either Y or N'
-				
+
 			else:
 				print('Your role is undefined')
 				return('Your role is undefined')
-						
+
 	def add_person_all_people(self, name, role, wants_accomodation,random_office,random_living_space):
 		if role == 'STAFF':
 			staff = Staff(name,role,wants_accomodation)
@@ -159,7 +165,7 @@ class Amity(object):
 			else:
 				random_office.allocated_members.append(name)
 				staff.office_allocated = random_office.room_name
-		
+
 		else:
 			fellow = Fellow(name,role,wants_accomodation)
 			self.all_people.append(fellow)
@@ -180,7 +186,7 @@ class Amity(object):
 					random_living_space.allocated_members.append(name)
 					fellow.living_space_allocated = random_living_space.room_name
 					fellow.office_allocated = random_office.room_name
-						
+
 	#Fuction for creating rooms
 	def  create_room(self, room_name):
 		room_type = room_name[-1]
@@ -197,7 +203,7 @@ class Amity(object):
 					print('One of the rooms entered exits')
 					return 'One of the rooms entered exits'
 					break
-				else:	
+				else:
 					office = Office(office,room_type)
 					self.all_rooms_office.append(office)
 			for room in self.all_rooms_office:
