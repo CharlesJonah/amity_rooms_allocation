@@ -84,7 +84,7 @@ class AmityTest_CreateRoom(unittest.TestCase):
 		add_room = self.amity.create_room(['RUBY','LIVING_SPACE'])
 		self.assertEqual(add_room, 'One of the rooms entered exits')
 
-class AmityTest_CreateRoom(unittest.TestCase):
+class AmityTest_LoadPeople(unittest.TestCase):
 
 	"Setup for class initializations"
 	def setUp(self):
@@ -101,6 +101,40 @@ class AmityTest_CreateRoom(unittest.TestCase):
 		empty_filepath = 'files/empty_file.txt'
 		status = self.amity.load_people(empty_filepath)
 		self.assertEqual('The file has no contents', status)
+
+class AmityTest_ReallocatePerson(unittest.TestCase):
+	"This class contains tests for the reallocate_person function"
+
+	def setUp(self):
+		"Setup for class initializations"
+		self.amity = Amity()
+
+	def test_if_person_name_exists_before_reallocation(self):
+		"Tests if the person name exists so as to reallocate the person"
+		people_list = []
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.create_room(['RUBY','LIVING_SPACE'])
+		self.amity.add_person('Charles','Fellow','Y')
+		self.amity.reallocate_person('Charles','SHIRE')
+		for person in self.amity.all_people:
+			person_name = person.name
+			people_list.append(person_name)
+		self.assertTrue('Charles' in people_list)
+
+	def test_if_office_exists_before_reallocation(self):
+		office_list = []
+		self.amity.create_room(['SHIRE','OFFICE'])
+		self.amity.add_person('Charles','Fellow','Y')
+		self.amity.reallocate_person('Charles','SHIRE')
+		for office in self.amity.all_rooms_office:
+			room_name = office.room_name
+			office_list.append(room_name)
+		self.assertTrue('SHIRE' in office_list)
+
+
+
+
+
 
 	def test_reallocate_person(self):
 

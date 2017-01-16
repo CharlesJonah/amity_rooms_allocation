@@ -2,7 +2,11 @@ import sys
 import os
 from person import Staff, Fellow
 from rooms import Office, Living_Space
+from models import OfficeModel, PersonModel, LivingSpaceModel, create_db, Base
 import random
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text, select
 
 #Main class Amity
 class Amity(object):
@@ -14,24 +18,186 @@ class Amity(object):
 		self.available_living_space = []
 		self.available_offices = []
 		self.input_file = ''
-	def save_state(self):
-		for i in self.all_people:
-			print(i.name)
-			print(i.role)
-			print(i.wants_accomodation)
-			print(i.office_allocated)
-			print(i.living_space_allocated)
+		self.person_role = ''
+		self.load_state()
+	def clear_tables(self, session):
+		meta = Base.metadata
+		for table in reversed(meta.sorted_tables):
+			session.execute(table.delete())
+		session.commit()
 
-		print('=================================')
-		for i in self.all_rooms_living:
-			print(i.room_name)
-			print(i.allocated_members)
-			print(i.room_type)
-		print('=================================')
-		for i in self.all_rooms_office:
-			print(i.room_name)
-			print(i.allocated_members)
-			print(i.room_type)
+	def save_state(self, db_name='amity'):
+		'''Persists data added during a sesion to a database file. Amity by default if none is given'''
+		engine = create_db(db_name)
+		Base.metadata.bind = engine
+		Session = sessionmaker()
+		session = Session()
+		self.clear_tables(session)
+		for office in self.all_rooms_office:
+			allocated_members_string = ''
+			room_name = office.room_name
+			allocated_members = office.allocated_members
+			for member in allocated_members:
+				member = ',' + member
+				allocated_members_string += member
+			room_type = office.room_type
+			capacity = office.capacity
+			office_record = OfficeModel(room_name = room_name, allocated_members = allocated_members_string,
+						 room_type = room_type, capacity = capacity)
+			session.add(office_record)
+			session.commit()
+		for living in self.all_rooms_living:
+			allocated_members_string = ''
+			room_name = living.room_name
+			allocated_members = living.allocated_members
+			for member in allocated_members:
+				member = ',' + member
+				allocated_members_string += member
+			room_type = living.room_type
+			capacity = living.capacity
+			living_record = LivingSpaceModel(room_name = room_name, allocated_members = allocated_members_string,
+						 room_type = room_type, capacity = capacity)
+			session.add(living_record)
+			session.commit()
+		for person in self.all_people:
+			name = person.name
+			role = person.role
+			wants_accomodation = person.wants_accomodation
+			office_allocated = person.office_allocated
+			living_space_allocated = person.living_space_allocated
+			person_record = PersonModel(name = name, role = role, wants_accomodation = wants_accomodation,
+										office_allocated = office_allocated,
+										living_space_allocated = living_space_allocated)
+			session.add(person_record)
+			session.commit()
+	def load_state(self, db_name='amity'):
+		'''Persists data added during a sesion to a database file. Amity by default if none is given'''
+		engine = create_db(db_name)
+		Base.metadata.bind = engine
+		Session = sessionmaker()
+		session = Session()
+		del self.all_rooms_office[:]
+		del self.all_rooms_living[:]
+		del self.all_people[:]
+		for office in session.query(OfficeModel):
+			office_allocated_members_string = ''
+			room_name = office.room_name
+			office_allocated_members_string = office.allocated_members
+			allocated_members = office_allocated_members_string.split(',')
+			del allocated_members[0]
+			room_type = office.room_type
+			capacity = office.capacity
+			office = Office(room_name,room_type)
+			office.allocated_members = allocated_members
+			office.capacity = capacity
+			self.all_rooms_office.append(office)
+			print(office.allocated_members)
+		for living in session.query(LivingSpaceModel):
+			living_allocated_members_string = ''
+			room_name = living.room_name
+			living_allocated_members_string = living.allocated_members
+			allocated_members = living_allocated_members_string.split(',')
+			del allocated_members[0]
+			room_type = living.room_type
+			capacity = living.capacity
+			living =  Living_Space(room_name,room_type)
+			living.allocated_members = []
+			living.capacity = capacity
+			self.all_rooms_living.append(living)
+			print(living.allocated_members)
+
+		for person in session.query(PersonModel):
+			self.all_people.append(person)
+	def check_person_role(self,person_identifier):
+		for person in self.all_people:
+			if person_identifier == person.name:
+				self.person_role =person.role
+				return True
+				print('true')
+			else:
+				return False
+				print('false')
+	def check_if_person_name_is_valid(self,person_identifier,new_room):
+		for person in self.all_people:
+			if person_identifier == person.name:
+				person.office_allocated = new_room
+				print(person.office_allocated)
+				return True
+			else:
+				return False
+	def check_if_office_name_is_valid(self,new_room):
+		self.func_office_available()
+		for office in self.available_offices:
+			if new_room == office.room_name:
+				return True
+			else:
+				return False
+
+	def check_if_living_space_name_is_valid(self,new_room):
+		self.func_available_living_space()
+		for living in self.available_living_space:
+			if new_room == living.room_name:
+				return True
+			else:
+				return False
+
+	def swap_living_space_members(self,person_identifier,new_room):
+		self.func_available_living_space()
+		for living in self.available_living_space:
+			if new_room == living.room_name:
+				living.allocated_members.append(person_identifier)
+				#remove person from older room
+				return True
+			else:
+				return False
+
+	def swap_office_members(self,person_identifier,new_room):
+		self.func_office_available()
+		for office in self.available_offices:
+			if new_room == office.room_name:
+				office.allocated_members.append(person_identifier)
+				#remove person from older room
+				return True
+			else:
+				return False
+
+	def reallocate_person(self,person_identifier,new_room):
+		person_identifier = person_identifier
+		new_room = new_room
+		self.check_person_role(person_identifier)
+		if self.person_role == 'STAFF':
+			if(self.check_if_office_name_is_valid(new_room)):
+				if(self.check_if_person_name_is_valid(person_identifier,new_room)):
+					if self.swap_office_members(person_identifier,new_room):
+						print('You have been reallocated successfully')
+					else:
+						print('Oops!Reallocation has failed.')
+				else:
+					print('Your name does not exist in the system')
+			else:
+				print('The room entered is not a valid room.')
+		elif self.person_role == 'FELLOW':
+			if(self.check_if_office_name_is_valid(new_room)):
+				if(self.check_if_person_name_is_valid(person_identifier,new_room)):
+					if self.swap_living_space_members(person_identifier,new_room):
+						print('You have been reallocated successfully')
+					else:
+						print('Oops!Reallocation has failed.')
+				else:
+					print('Your name does not exist in the system')
+			elif(self.check_if_living_space_name_is_valid(new_room)):
+				if(self.check_if_person_name_is_valid(person_identifier,new_room)):
+					if self.swap_living_space_members(person_identifier,new_room):
+						print('You have been reallocated successfully')
+					else:
+						print('Oops!Reallocation has failed.')
+				else:
+					print('Your name does not exist in the system')
+
+			else:
+				print('The room entered is not a valid room.')
+		else:
+			('System was unable to identify your role.')
 
 	def load_people(self,file_path):
 		try:
@@ -165,6 +331,7 @@ class Amity(object):
 			else:
 				random_office.allocated_members.append(name)
 				staff.office_allocated = random_office.room_name
+				print(staff.office_allocated)
 
 		else:
 			fellow = Fellow(name,role,wants_accomodation)

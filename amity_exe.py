@@ -7,6 +7,7 @@ Usage:
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
     rooms_app save_state
     rooms_app load_people <file_path>
+    reallocate_person <person_identifier> <new_room_name>
 
 
 
@@ -79,13 +80,18 @@ class ScreenOut (cmd.Cmd):
 
     @docopt_cmd
     def do_reallocate_person(self, args):
-        """Usage: reallocate_person <person_identifier> <room_name> <room_type>"""
-        amity.reallocate_person(args['<person_identifier>'],args['<room_name>'],args['<room_type>'])
+        """Usage: reallocate_person <person_identifier> <new_room_name>"""
+        amity.reallocate_person(args['<person_identifier>'],args['<new_room_name>'])
 
     @docopt_cmd
     def do_save_state(self,arg):
         """Usage: save_state """
         amity.save_state()
+
+    @docopt_cmd
+    def do_load_state(self,arg):
+        """Usage: save_state """
+        amity.load_state()
 
     @docopt_cmd
     def do_load_people(self,args):

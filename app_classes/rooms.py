@@ -15,7 +15,7 @@ class Living_Space(Rooms):
 			return True
 		else:
 			return False
-			
+
 #Class living_space inherits from Rooms
 class Office(Rooms):
 	def __init__(self, room_name,room_type):
