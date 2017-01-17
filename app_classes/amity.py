@@ -26,42 +26,68 @@ class Amity(object):
 			session.execute(table.delete())
 		session.commit()
 	def print_allocations(self):
+		output = ''
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
 		print('OFFICE ALLOCATIONS')
+		output += 'OFFICE ALLOCATIONS\n'
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
+
 		all_members = ''
 		for office in self.all_rooms_office:
 
 			room_name = office.room_name
+			output += (room_name + '\n')
 			print(room_name)
 			print('---------------------------------------')
+			output += '---------------------------------------\n'
 			all_members = ', '.join(office.allocated_members)
 			print(all_members)
+			output += (all_members + '\n')
 			print('\n')
+			output +='\n'
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
 		print('LIVING SPACE ALLOCATIONS')
+		output += 'LIVING SPACE ALLOCATIONS\n'
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
 		all_members = ''
 		for living in self.all_rooms_living:
 
 			room_name = living.room_name
 			print(room_name)
 			print('---------------------------------------')
+			output += '---------------------------------------\n'
 			all_members = ', '.join(living.allocated_members)
 			print(all_members)
+			output += (all_members + '\n')
 			print('\n')
+		files = open("option" + ".txt", "w")
+		files.write(output)
+		files.close()
 	def print_unallocated(self):
+		output = ''
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
 		print('UNALLOCATED MEMBERS')
+		output += 'UNALLOCATED MEMBERS\n'
 		print('---------------------------------------')
+		output += '---------------------------------------\n'
 		for person in self.all_people:
 			if person.office_allocated == None and person.living_space_allocated == None:
 				name = person.name
 				role = person.role
 				wants_accomodation = person.wants_accomodation
 				print(name + ' ' + role + ' ' + wants_accomodation)
+				output += (name + ' ' + role + ' ' + wants_accomodation + '\n')
 			else:
 				print('It seems that everybody has a room.')
+				output += 'It seems that everybody has a room.\n'
+		files = open("option1" + ".txt", "w")
+		files.write(output)
+		files.close()
 
 	def save_state(self, db_name='amity'):
 		'''Persists data added during a sesion to a database file. Amity by default if none is given'''

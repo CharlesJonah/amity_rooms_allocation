@@ -57,11 +57,6 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
-#This function clears the screen for fresh output
-def clear_screen():
-    clear = lambda: os.system('cls')
-    clear()
-
 #This class ties all the docopt calling functions
 class ScreenOut (cmd.Cmd):
 
@@ -116,7 +111,6 @@ class ScreenOut (cmd.Cmd):
     # This cmd allows the user to quit from the app
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
-        clear_screen()
         print('Successfully Exited Program')
         exit()
 
