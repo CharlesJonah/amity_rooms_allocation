@@ -25,6 +25,34 @@ class Amity(object):
 		for table in reversed(meta.sorted_tables):
 			session.execute(table.delete())
 		session.commit()
+	def print_room(self,room_name):
+		room_found = False
+		for office in self.all_rooms_office:
+			if office.room_name == room_name:
+				if len(office.allocated_members) != 0:
+					all_members = ', '.join(office.allocated_members)
+					room_found = True
+					print(all_members)
+					break
+				else:
+					print('No members allocated to that room.')
+					room_found = True
+			else:
+				for living in self.all_rooms_living:
+					if living.room_name == room_name:
+						if len(living.all_members) != 0:
+							all_members = ', '.join(living.allocated_members)
+							room_found = True
+							print(all_members)
+							break
+						else:
+							print('No members allocated to that room.')
+							room_found = True
+
+		if room_found == False:
+			print('Room was not found')
+
+
 	def print_allocations(self):
 		output = ''
 		print('---------------------------------------')

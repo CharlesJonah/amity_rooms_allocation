@@ -9,6 +9,7 @@ Usage:
     rooms_app print_allocations
     rooms_app print_allocated
     rooms_app load_people <file_path>
+    rooms_app print_room <room_name>
     reallocate_person <person_identifier> <new_room_name>
 
 
@@ -104,6 +105,10 @@ class ScreenOut (cmd.Cmd):
     def do_load_people(self,args):
         """Usage: load_people <file_path>"""
         amity.load_people(args['<file_path>'])
+    @docopt_cmd
+    def do_print_room(self,args):
+        """Usage: print_room <room_name>"""
+        amity.print_room(args['<room_name>'])
 
 
 
