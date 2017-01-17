@@ -6,6 +6,8 @@ Usage:
     rooms_app create_room <room_name>...
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
     rooms_app save_state
+    rooms_app print_allocations
+    rooms_app print_allocated
     rooms_app load_people <file_path>
     reallocate_person <person_identifier> <new_room_name>
 
@@ -92,6 +94,16 @@ class ScreenOut (cmd.Cmd):
     def do_load_state(self,arg):
         """Usage: save_state """
         amity.load_state()
+
+    @docopt_cmd
+    def do_print_allocations(self,arg):
+        """Usage: print_allocations """
+        amity.print_allocations()
+
+    @docopt_cmd
+    def do_print_unllocated(self,arg):
+        """Usage: print_unallocated """
+        amity.print_unallocated()
 
     @docopt_cmd
     def do_load_people(self,args):

@@ -25,6 +25,43 @@ class Amity(object):
 		for table in reversed(meta.sorted_tables):
 			session.execute(table.delete())
 		session.commit()
+	def print_allocations(self):
+		print('---------------------------------------')
+		print('OFFICE ALLOCATIONS')
+		print('---------------------------------------')
+		all_members = ''
+		for office in self.all_rooms_office:
+
+			room_name = office.room_name
+			print(room_name)
+			print('---------------------------------------')
+			all_members = ', '.join(office.allocated_members)
+			print(all_members)
+			print('\n')
+		print('---------------------------------------')
+		print('LIVING SPACE ALLOCATIONS')
+		print('---------------------------------------')
+		all_members = ''
+		for living in self.all_rooms_living:
+
+			room_name = living.room_name
+			print(room_name)
+			print('---------------------------------------')
+			all_members = ', '.join(living.allocated_members)
+			print(all_members)
+			print('\n')
+	def print_unallocated(self):
+		print('---------------------------------------')
+		print('UNALLOCATED MEMBERS')
+		print('---------------------------------------')
+		for person in self.all_people:
+			if person.office_allocated == None and person.living_space_allocated == None:
+				name = person.name
+				role = person.role
+				wants_accomodation = person.wants_accomodation
+				print(name + ' ' + role + ' ' + wants_accomodation)
+			else:
+				print('It seems that everybody has a room.')
 
 	def save_state(self, db_name='amity'):
 		'''Persists data added during a sesion to a database file. Amity by default if none is given'''
@@ -91,7 +128,6 @@ class Amity(object):
 			office.allocated_members = allocated_members
 			office.capacity = capacity
 			self.all_rooms_office.append(office)
-			print(office.allocated_members)
 		for living in session.query(LivingSpaceModel):
 			living_allocated_members_string = ''
 			room_name = living.room_name
@@ -104,8 +140,6 @@ class Amity(object):
 			living.allocated_members = []
 			living.capacity = capacity
 			self.all_rooms_living.append(living)
-			print(living.allocated_members)
-
 		for person in session.query(PersonModel):
 			self.all_people.append(person)
 	def check_person_role(self,person_identifier):
