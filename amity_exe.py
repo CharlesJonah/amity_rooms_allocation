@@ -2,7 +2,7 @@
 This uses docopt library to allow for a smooth user Interactive session.
 Usage:
 
-    rooms_app add_person <person_name> <role> <wants_accommodation>
+    rooms_app add_person <person_name> <role> [--wants_accommodation=N]
     rooms_app create_room <room_name>...
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
     rooms_app save_state
@@ -63,12 +63,17 @@ class ScreenOut (cmd.Cmd):
 
 
     #The prompt that shows the use that he or she is running form the application in the cmd
-    prompt = '<rooms_app> '
+    prompt = '<rooms_app>'
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <person_name> <role> <wants_accommodation>"""
-        amity.add_person(args['<person_name>'],args['<role>'],args['<wants_accommodation>'])
+        """Usage: add_person <person_name> <role> [--wants_accommodation=N]"""
+        person_name = args['<person_name>']
+        role = args['<role>']
+        if args['--wants_accommodation'] is None:
+            args['--wants_accommodation'] = 'N'
+        wants_accommodation = args['--wants_accommodation'] 
+        amity.add_person(person_name, role, wants_accommodation)
 
     # This cmd links to the search() method
     @docopt_cmd
