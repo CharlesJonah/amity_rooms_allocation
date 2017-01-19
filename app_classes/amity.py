@@ -53,7 +53,7 @@ class Amity(object):
 			print('Room was not found')
 
 
-	def print_allocations(self):
+	def print_allocations(self, filename):
 		output = ''
 		print('---------------------------------------')
 		output += '---------------------------------------\n'
@@ -83,19 +83,22 @@ class Amity(object):
 		output += '---------------------------------------\n'
 		all_members = ''
 		for living in self.all_rooms_living:
-
 			room_name = living.room_name
-			print(room_name)
 			print('---------------------------------------')
 			output += '---------------------------------------\n'
 			all_members = ', '.join(living.allocated_members)
 			print(all_members)
 			output += (all_members + '\n')
 			print('\n')
-		files = open("option" + ".txt", "w")
-		files.write(output)
-		files.close()
-	def print_unallocated(self):
+		if filename is  None:
+			pass
+		else:
+			directory = 'files/'
+			files = open(directory + filename + ".txt", "w")
+			files.write(output)
+			files.close()
+
+	def print_unallocated(self, filename):
 		output = ''
 		print('---------------------------------------')
 		output += '---------------------------------------\n'
@@ -113,11 +116,15 @@ class Amity(object):
 			else:
 				print('It seems that everybody has a room.')
 				output += 'It seems that everybody has a room.\n'
-		files = open("option1" + ".txt", "w")
-		files.write(output)
-		files.close()
+		if filename is None:
+			pass
+		else:
+			directory = 'files/' 
+			files = open(directory + filename + ".txt", "w")
+			files.write(output)
+			files.close()
 
-	def save_state(self, db_name='amity'):
+	def save_state(self, db_name):
 		'''Persists data added during a sesion to a database file. Amity by default if none is given'''
 		engine = create_db(db_name)
 		Base.metadata.bind = engine

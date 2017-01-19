@@ -5,9 +5,10 @@ Usage:
     rooms_app add_person <person_name> <role> [--wants_accommodation=N]
     rooms_app create_room <room_name>...
     rooms_app reallocate_person <person_identifier> <room_name> <room_type>
-    rooms_app save_state
-    rooms_app print_allocations
-    rooms_app print_allocated
+    rooms_app save_state [--db=sqlite_database]
+    rooms_app load_state <database>
+    rooms_app print_allocations [--o=filename]
+    rooms_app print_allocated [--o=filename]
     rooms_app load_people <file_path>
     rooms_app print_room <room_name>
     reallocate_person <person_identifier> <new_room_name>
@@ -26,9 +27,6 @@ sys.path.append('./app_classes')
 from amity import Amity
 from docopt import docopt, DocoptExit
 amity = Amity()
-
-
-
 
 def docopt_cmd(func):
     """
@@ -60,8 +58,6 @@ def docopt_cmd(func):
 
 #This class ties all the docopt calling functions
 class ScreenOut (cmd.Cmd):
-
-
     #The prompt that shows the use that he or she is running form the application in the cmd
     prompt = '<rooms_app>'
 
@@ -87,24 +83,39 @@ class ScreenOut (cmd.Cmd):
         amity.reallocate_person(args['<person_identifier>'],args['<new_room_name>'])
 
     @docopt_cmd
-    def do_save_state(self,arg):
-        """Usage: save_state """
-        amity.save_state()
+    def do_save_state(self,args):
+        """Usage: save_state [--db=sqlite_database]"""
+        if args['--db'] is None:
+            db_name = 'amity'
+            amity.save_state(db_name)
+        else:
+            db_name = args['--db']
+            amity.save_state(db_name)
 
     @docopt_cmd
-    def do_load_state(self,arg):
-        """Usage: save_state """
-        amity.load_state()
+    def do_load_state(self,args):
+        """Usage: load_state <database>"""
+        amity.load_state(args['<database>'])
 
     @docopt_cmd
-    def do_print_allocations(self,arg):
-        """Usage: print_allocations """
-        amity.print_allocations()
+    def do_print_allocations(self,args):
+        """Usage: print_allocations [--o=filename]"""
+        if args['--o'] is None:
+            filename = None
+            amity.print_allocations(filename)
+        else:
+            filename = args['--o']
+            amity.print_allocations(filename)
 
     @docopt_cmd
-    def do_print_unllocated(self,arg):
-        """Usage: print_unallocated """
-        amity.print_unallocated()
+    def do_print_unallocated(self,args):
+        """Usage: print_unallocations [--o=filename]"""
+        if args['--o'] is None:
+            filename = None
+            amity.print_unallocated(filename)
+        else:
+            filename = args['--o']
+            amity.print_unallocated(filename)
 
     @docopt_cmd
     def do_load_people(self,args):

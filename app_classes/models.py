@@ -31,6 +31,7 @@ class OfficeModel(Base):
     room_type = Column(String(100), nullable=False)
     capacity =Column(Integer)
 def create_db(db_name):
-    engine = create_engine('sqlite:///' + db_name)
+    directory = 'databases/'
+    engine = create_engine('sqlite:///' + directory + db_name)
     Base.metadata.create_all(engine)
     return engine
