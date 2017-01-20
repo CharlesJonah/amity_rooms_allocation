@@ -85,6 +85,8 @@ class Amity(object):
 		all_members = ''
 		for living in self.all_rooms_living:
 			room_name = living.room_name
+			print(room_name)
+			output +=room_name
 			print('---------------------------------------')
 			output += '---------------------------------------\n'
 			all_members = ', '.join(living.allocated_members)
@@ -199,7 +201,7 @@ class Amity(object):
 			room_type = living.room_type
 			capacity = living.capacity
 			living =  Living_Space(room_name,room_type)
-			living.allocated_members = []
+			living.allocated_members = allocated_members
 			living.capacity = capacity
 			self.all_rooms_living.append(living)
 		for person in session.query(PersonModel):
@@ -209,17 +211,16 @@ class Amity(object):
 		name_found = False
 		for person in self.all_people:
 			if person_identifier == person.name:
+				self.person_role =person.role
 				name_found = True	
 				break
 			else:
 				name_found = False
 		if name_found:
-			self.person_role =person.role
 			return True
 		else:
 			print('Your name has not been found in system')
 			return False
-
 
 	def check_if_office_name_is_valid(self,room):
 		self.func_office_available()
@@ -235,23 +236,31 @@ class Amity(object):
 			return True
 		return False
 
-	def check_if_living_space_name_is_valid(self,new_room):
+	def check_if_living_space_name_is_valid(self,room):
 		self.func_available_living_space()
+		room_found = False
 		for living in self.available_living_space:
-			if new_room == living.room_name:
-				return True
+			living = living.room_name
+			if room == living:
+				room_found = True
+				break
 			else:
-				return False
-	def remove_person_from_initial_room(self, person_identifier, office_allocated):
+				room_found = False
+		if room_found:
+			return True
+		return False
+
+		# for living in self.available_living_space:
+		# 	if new_room == living.room_name:
+		# 		return True
+		# 	else:
+		# 		return False
+	def remove_person_from_initial_office(self, person_identifier, current_office):
 		room_found = False
 		for office in self.all_rooms_office:
-			if office_allocated == office.room_name:
-				print(office.room_name)
-				print(office.allocated_members)
+			if current_office == office.room_name:
 				office.allocated_members.remove(person_identifier)
 				room_found = True
-				print(office.room_name)
-				print(office.allocated_members)
 				break
 			else:
 				room_found = False
@@ -260,16 +269,35 @@ class Amity(object):
 		else:
 			return False
 
+	def remove_person_from_initial_living_space(self, person_identifier, current_living_space):
+		room_found = False
+		for living in self.all_rooms_living:
+			if current_living_space == living.room_name:
+				living.allocated_members.remove(person_identifier)
+				room_found = True
+				break
+			else:
+				room_found = False
+		if room_found:
+			return True
+		else:
+			return False
 
-	def swap_living_space_members(self,person_identifier,new_room):
-		self.func_available_living_space()
+	def swap_living_space_members(self,person_identifier,new_room,current_living_space):
+		self.func_available_living_space
+		room_found = False
 		for living in self.available_living_space:
 			if new_room == living.room_name:
 				living.allocated_members.append(person_identifier)
-				#remove person from older room
-				return True
+				self.remove_person_from_initial_living_space(person_identifier,current_living_space)
+				room_found = True
+				break
 			else:
-				return False
+				room_found = False
+		if room_found:
+			return True
+		else:
+			return False
 
 	def swap_office_members(self,person_identifier,new_room,current_office):
 		self.func_office_available()
@@ -277,9 +305,7 @@ class Amity(object):
 		for office in self.available_offices:
 			if new_room == office.room_name:
 				office.allocated_members.append(person_identifier)
-				print(office.allocated_members)
-				print(office.room_name)
-				self.remove_person_from_initial_room(person_identifier,current_office)
+				self.remove_person_from_initial_office(person_identifier,current_office)
 				room_found = True
 				break
 			else:
@@ -298,8 +324,7 @@ class Amity(object):
 			if(self.check_if_office_name_is_valid(new_room)):
 				for person in self.all_people:
 					if person_identifier == person.name:
-						self.office_allocated = person.office_allocated
-						current_office = new_room
+						current_office = person.office_allocated
 						break
 				if self.swap_office_members(person_identifier,new_room,current_office):
 					print('You have been reallocated successfully')
@@ -309,19 +334,29 @@ class Amity(object):
 				print('The room entered is not a valid room.')
 		elif self.person_role == 'FELLOW':
 			if(self.check_if_office_name_is_valid(new_room)):
-				if self.swap_living_space_members(person_identifier,new_room):
+				for person in self.all_people:
+					if person_identifier == person.name:
+						current_office = person.office_allocated
+						break
+				if self.swap_office_members(person_identifier,new_room,current_office):
 					print('You have been reallocated successfully')
 				else:
 					print('Oops!Reallocation has failed.')
 			elif(self.check_if_living_space_name_is_valid(new_room)):
-				if self.swap_living_space_members(person_identifier,new_room):
+				#code
+				for person in self.all_people:
+					if person_identifier == person.name:
+						current_living_space = person.living_space_allocated
+						break
+				if self.swap_living_space_members(person_identifier,new_room,current_living_space):
 					print('You have been reallocated successfully')
 				else:
 					print('Oops!Reallocation has failed.')
+
 			else:
 				print('The room entered is not a valid room.')
 		else:
-			('System was unable to identify your role.')
+			print('System was unable to identify your role.')
 
 	def load_people(self,file_path):
 		try:
