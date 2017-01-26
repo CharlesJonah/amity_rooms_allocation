@@ -3,7 +3,7 @@ import sys
 sys.path.append('./app_classes')
 from amity import Amity
 #Tests under add_person functions
-class AmityTest_AddPerson(unittest.TestCase):
+class AmityTestAddPerson(unittest.TestCase):
 	""" This class tests all cases associated with add_person function """
 
 	def setUp(self):
@@ -58,7 +58,7 @@ class AmityTest_AddPerson(unittest.TestCase):
 		add_person = self.amity.add_person('Charles','Mac','STAF','N')
 		self.assertEqual(add_person, 'Your role is undefined')
 
-class AmityTest_CreateRoom(unittest.TestCase):
+class AmityTestCreateRoom(unittest.TestCase):
 	""" This class tests all cases associated with create_room function """
 
 	def setUp(self):
@@ -82,7 +82,7 @@ class AmityTest_CreateRoom(unittest.TestCase):
 		add_room = self.amity.create_room(['RUBY','LIVING_SPACE'])
 		self.assertEqual(add_room, 'One of the rooms entered exits')
 
-class AmityTest_LoadPeople(unittest.TestCase):
+class AmityTestLoadPeople(unittest.TestCase):
 	""" This class tests all cases associated with load_people function """
 
 	def setUp(self):
@@ -101,7 +101,7 @@ class AmityTest_LoadPeople(unittest.TestCase):
 		status = self.amity.load_people(empty_filepath)
 		self.assertEqual('The file has no contents', status)
 
-class AmityTest_ReallocatePerson(unittest.TestCase):
+class AmityTestReallocatePerson(unittest.TestCase):
 	"""This class contains tests for the reallocate_person function"""
 
 	def setUp(self):
@@ -130,7 +130,7 @@ class AmityTest_ReallocatePerson(unittest.TestCase):
 			office_list.append(room_name)
 		self.assertTrue('SHIRE' in office_list)
 
-class AmityTest_PrintAllocations(unittest.TestCase):
+class AmityTestPrintAllocations(unittest.TestCase):
 	"""This class contains tests for the print_allocations function"""
 
 	def setUp(self):
@@ -146,7 +146,7 @@ class AmityTest_PrintAllocations(unittest.TestCase):
 		""" Tests if the filename contains unwanted characters """
 		self.assertEqual(self.amity.print_allocations('test/<>file'), False)
 
-class AmityTest_PrintUnallocated(unittest.TestCase):
+class AmityTestPrintUnallocated(unittest.TestCase):
 	"""This class contains tests for the print_unallocated function """
 
 	def setUp(self):
@@ -162,7 +162,7 @@ class AmityTest_PrintUnallocated(unittest.TestCase):
 		""" Tests if the filename contains unwanted characters """
 		self.assertEqual(self.amity.print_unallocated('test/<>file'), False)
 
-class AmityTest_PrintRoom(unittest.TestCase):
+class AmityTestPrintRoom(unittest.TestCase):
 	""" This class contains tests for the print_room function """
 
 	def setUp(self):
@@ -173,7 +173,7 @@ class AmityTest_PrintRoom(unittest.TestCase):
 		""" Tests if room name is a valid name in the system """
 		self.assertEqual(self.amity.print_room('test_room'), 'Room was not found')
 
-class AmityTest_LoadState(unittest.TestCase):
+class AmityTestLoadState(unittest.TestCase):
 	""" This class contains tests for the load_state function """
 
 	def setUp(self):
@@ -184,7 +184,7 @@ class AmityTest_LoadState(unittest.TestCase):
 		""" Tests if the database name contains unwanted characters """
 		self.assertEqual(self.amity.load_state('db/<>name'), False)
 
-class AmityTest_SaveState(unittest.TestCase):
+class AmityTestSaveState(unittest.TestCase):
 	""" This class contains tests for the save_state function """
 
 	def setUp(self):

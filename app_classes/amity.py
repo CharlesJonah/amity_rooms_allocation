@@ -60,6 +60,19 @@ class Amity(object):
 			cprint ('*** Done! ***','cyan', attrs=['bold'])
 		except Exception as e:
 			print(e)
+		
+	def update_database(self):
+		""" Updates local database with data from firebase online database"""
+		try: 
+			
+			fibase = firebase.FirebaseApplication('https://amity-fb5f5.firebaseio.com/')
+			upload_person = fibase.get('/')
+			for i in tqdm(range(200)):
+				sleep(0.01)
+			cprint ('*** Done! ***','cyan', attrs=['bold'])
+			print(upload_person)
+		except Exception as e:
+			print(e)
 
 	def print_room(self,room_name):
 		""" This function prints a room with all its allocated members"""
@@ -67,12 +80,12 @@ class Amity(object):
 		for office in self.all_rooms_office:
 			if office.room_name == room_name:
 				if len(office.allocated_members) != 0:
-					all_members = ', '.join(office.allocated_members)
 					cprint('---------------------------------------','cyan', attrs=['bold'])
 					cprint('ALLOCATED MEMBERS','yellow', attrs=['bold'])
 					cprint('---------------------------------------','cyan', attrs=['bold'])
 					room_found = True
-					cprint(all_members,'yellow', attrs=['bold'])
+					for person in office.allocated_members:
+						cprint(person,'yellow', attrs=['bold'])
 					break
 				else:
 					cprint('No members allocated to that room.','red', attrs=['bold'])
@@ -81,12 +94,12 @@ class Amity(object):
 			for living in self.all_rooms_living:
 				if living.room_name == room_name:
 					if len(living.allocated_members) != 0:
-						all_members = ', '.join(living.allocated_members)
 						cprint('---------------------------------------','cyan', attrs=['bold'])
 						cprint('ALLOCATED MEMBERS','yellow', attrs=['bold'])
 						cprint('---------------------------------------','cyan', attrs=['bold'])
 						room_found = True
-						cprint(all_members,'yellow', attrs=['bold'])
+						for person in living.allocated_members:
+							cprint(person,'yellow', attrs=['bold'])
 						break
 					else:
 						cprint('No members allocated to that room.','red', attrs=['bold'])
@@ -122,9 +135,9 @@ class Amity(object):
 				cprint(room_name,'yellow', attrs=['bold'])
 				cprint('---------------------------------------','cyan', attrs=['bold'])
 				output += '---------------------------------------\n'
-				all_members = ', '.join(office.allocated_members)
-				cprint(all_members,'yellow', attrs=['bold'])
-				output += (all_members + '\n')
+				for person in office.allocated_members:
+					cprint(person,'yellow', attrs=['bold'])
+					output += (person + '\n')
 				print('\n')
 				output +='\n'
 		else:
@@ -145,9 +158,9 @@ class Amity(object):
 				output +=room_name
 				cprint('---------------------------------------','cyan', attrs=['bold'])
 				output += '---------------------------------------\n'
-				all_members = ', '.join(living.allocated_members)
-				cprint(all_members,'yellow', attrs=['bold'])
-				output += (all_members + '\n')
+				for person in living.allocated_members:
+					cprint(person,'yellow', attrs=['bold'])
+					output += (person + '\n')
 				print('\n')
 		else:
 			cprint('No living spaces in the system','red', attrs=['bold'])
@@ -460,21 +473,24 @@ class Amity(object):
 					cprint('The file has no contents', 'red', attrs=['bold'])
 					return 'The file has no contents'
 				else:
-					for line in people:
-						line = line.replace('\n','')
-						person = line.split(' ')
+					for person in people:
+						person = person.replace('\n','')
+						person = person.split(' ')
 						if len(person) < 4:
 							wants_accomodation = 'N'
-							name = person[0] + " " + person[1]
+							fname = person[0]
+							lname = person[1]
 							role = person[2]
-							self.add_person(name, role, wants_accomodation)
+							self.add_person(fname,lname, role, wants_accomodation)
 						else:
 							wants_accomodation = person[3]
-							name = person[0] + " " + person[1]
+							fname = person[0]
+							lname = person[1]
 							role = person[2]
-							self.add_person(name, role, wants_accomodation)
+							self.add_person(fname, lname, role, wants_accomodation)
 
 		except Exception as e:
+			print(str(e))
 			cprint ('Oops! The system failed to read the file', 'red', attrs=['bold'])
 			return 'Oops! The system failed to read the file'
 

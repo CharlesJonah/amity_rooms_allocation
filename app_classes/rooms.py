@@ -11,7 +11,7 @@ class Living_Space(Rooms):
 		Rooms.__init__(self,room_name,room_type)
 		self.capacity = 4
 	def check_availability(self):
-		if len(self.allocated_members) < 3:
+		if len(self.allocated_members) < 4:
 			return True
 		else:
 			return False
@@ -22,7 +22,7 @@ class Office(Rooms):
 		Rooms.__init__(self,room_name,room_type)
 		self.capacity = 6
 	def check_availability(self):
-		if len(self.allocated_members) < 3:
+		if len(self.allocated_members) < 6:
 			return True
 		else:
 			return False

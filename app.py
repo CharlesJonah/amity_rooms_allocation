@@ -11,6 +11,7 @@ Usage:
     rooms_app print_allocated [--o=filename]
     rooms_app load_people <file_path>
     rooms_app print_room <room_name>
+    rooms_app upload_database
     reallocate_person <first_name> <last_name> <new_room_name>
 
 
@@ -142,6 +143,12 @@ class ScreenOut (cmd.Cmd):
     def do_load_state(self,args):
         """Usage: load_state <database>"""
         amity.load_state(args['<database>'])
+    
+    # This cmd allows the user the load_state function
+    @docopt_cmd
+    def do_update_database(self,args):
+        """Usage: upload_database """
+        amity.update_database()
 
     # This cmd allows the user to call the print_allocations function
     @docopt_cmd
