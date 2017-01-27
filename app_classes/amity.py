@@ -433,7 +433,7 @@ class Amity(object):
 				else:
 					cprint('Oops!Reallocation has failed.','red', attrs=['bold'])
 			else:
-				cprint('The room entered is not a valid room.','red', attrs=['bold'])
+				cprint('The room entered is not available for you to reallocate','red', attrs=['bold'])
 		elif self.person_role == 'FELLOW':
 			if(self.check_if_office_name_is_valid(new_room)):
 				for person in self.all_people:
@@ -455,7 +455,7 @@ class Amity(object):
 					cprint('Oops!Reallocation has failed.','red', attrs=['bold'])
 
 			else:
-				cprint('The room entered is not a valid room.','red', attrs=['bold'])
+				cprint('The room entered is not available for you to reallocate.','red', attrs=['bold'])
 		else:
 			cprint('System was unable to identify your role.','red', attrs=['bold'])
 

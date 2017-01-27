@@ -33,7 +33,7 @@ class AmityTestAddPerson(unittest.TestCase):
 		self.assertEqual(add_person, 'Please create offices and living_spaces first.')
 
 	def test_add_person_with_accomodation_when_no_rooms_have_been_created(self):
-		"Tests if there are office before adding fellow without accomodation"
+		"Tests if there are offices before adding a fellow without accomodation"
 		add_person = self.amity.add_person('Charles','Mac','Fellow','N')
 		self.assertEqual(add_person, 'Please create offices first.')
 
@@ -153,7 +153,7 @@ class AmityTestPrintUnallocated(unittest.TestCase):
 		"Setup for class initializations"
 		self.amity = Amity()
 	
-	def test_if_office_exists_before_its_printing_members(self):
+	def test_if_system_has_people_before_printing(self):
 		""" Tests if the system has people before printing them
 			members """
 		self.assertEqual(self.amity.print_unallocated('test_file'),'No people found in the system')
