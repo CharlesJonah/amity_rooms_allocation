@@ -1,9 +1,7 @@
 import sys
 import os
-from person import Staff, Fellow
-from rooms import Office, Living_Space
-from models import OfficeModel, PersonModel, LivingSpaceModel, create_db, Base
 import random
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text, select
@@ -13,6 +11,10 @@ from time import sleep
 from tqdm import tqdm
 import json
 import sqlite3
+
+from person import Staff, Fellow
+from rooms import Office, Living_Space
+from models import OfficeModel, PersonModel, LivingSpaceModel, create_db, Base
 
 class Amity(object):
 	""" Class that holds all the application functionality and all the
@@ -27,7 +29,7 @@ class Amity(object):
 		self.input_file = '' #This variable holds the load_people file path
 		self.person_role = '' #This variable holds a persons role. e.g STAFF or FELLOW
 		self.load_state()  # initializes the application with data from the database
-	
+
 	def clear_tables(self, session):
 		""" Clears the information in database tables before populating the database
 			again """
@@ -37,7 +39,7 @@ class Amity(object):
 		session.commit()
 	def sync(self):
 		""" Syncs with firebase online database"""
-		try: 
+		try:
 			con = sqlite3.connect('databases/amity')
 			cur = con.cursor()
 			#Uploads the person table data to firebase
@@ -60,11 +62,11 @@ class Amity(object):
 			cprint ('*** Done! ***','cyan', attrs=['bold'])
 		except Exception as e:
 			print(e)
-		
+
 	def update_database(self):
 		""" Updates local database with data from firebase online database"""
-		try: 
-			
+		try:
+
 			fibase = firebase.FirebaseApplication('https://amity-fb5f5.firebaseio.com/')
 			upload_person = fibase.get('/')
 			for i in tqdm(range(200)):
@@ -111,7 +113,7 @@ class Amity(object):
 
 
 	def print_allocations(self, filename):
-		""" This function prints the respective room allocations. This shows the association 
+		""" This function prints the respective room allocations. This shows the association
 			of room members  to their rooms"""
 		if filename != None:
 			for char in filename:
@@ -166,7 +168,7 @@ class Amity(object):
 			cprint('No living spaces in the system','red', attrs=['bold'])
 			return 'No living spaces in the system'
 			output += 'No living spaces in the system\n'
-			
+
 		if filename is  None:
 			pass
 		else:
@@ -208,7 +210,7 @@ class Amity(object):
 		if filename is None:
 			pass
 		else:
-			directory = 'files/' 
+			directory = 'files/'
 			files = open(directory + filename + ".txt", "w")
 			files.write(output)
 			files.close()
@@ -262,7 +264,7 @@ class Amity(object):
 			session.add(person_record)
 			session.commit()
 		cprint('Your data has been saved successfully','cyan', attrs=['bold'])
-		
+
 	def load_state(self, db_name='amity'):
 		"""Loads data to the system from a database file. amity by default if is given"""
 		for char in db_name:
@@ -303,7 +305,7 @@ class Amity(object):
 		for person in session.query(PersonModel):
 			self.all_people.append(person)
 		cprint('SYSTEM HAS LOADED SUCCESSFULLY!', 'cyan', attrs=['bold'])
-	
+
 	def check_if_person_name_is_valid(self,person_identifier,new_room):
 		""" This function checks if a persons name is valid before reallocating him when doing
 			room reallocation"""
@@ -311,7 +313,7 @@ class Amity(object):
 		for person in self.all_people:
 			if person_identifier == person.name:
 				self.person_role =person.role
-				name_found = True	
+				name_found = True
 				break
 			else:
 				name_found = False
@@ -415,9 +417,9 @@ class Amity(object):
 		else:
 			return False
 
-			
+
 	def reallocate_person(self,first_name,last_name,new_room):
-		""" This function is the core function that carries out the process of reallocation. 
+		""" This function is the core function that carries out the process of reallocation.
 			The function controls the reallocation process and calls all the associated functions """
 		person_identifier = first_name + ' ' + last_name
 		new_room = new_room

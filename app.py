@@ -25,9 +25,11 @@ import sys
 import cmd
 import os
 sys.path.append('./app_classes')
-from amity import Amity
+
 from docopt import docopt, DocoptExit
 from termcolor import cprint, colored
+
+from amity import Amity
 amity = Amity()
 
 def docopt_cmd(func):
@@ -92,9 +94,9 @@ class ScreenOut (cmd.Cmd):
     cprint("*                                               *",'cyan', attrs=['bold'])
     cprint("* 9. help                                       *",'cyan', attrs=['bold'])
     cprint("*                                               *",'cyan', attrs=['bold'])
-    cprint("* 9. quit                                       *",'cyan', attrs=['bold']) 
+    cprint("* 9. quit                                       *",'cyan', attrs=['bold'])
     cprint("* * * * * * * * * * * * * * * * * * * * * * * * *",'cyan', attrs=['bold'])
-    print("                                                 ") 
+    print("                                                 ")
 
     #The prompt that shows the user that he or she is running form the application in the cmd
     prompt = '<rooms_app>'
@@ -108,7 +110,7 @@ class ScreenOut (cmd.Cmd):
         role = args['<role>']
         if args['--wants_accommodation'] is None:
             args['--wants_accommodation'] = 'N'
-        wants_accommodation = args['--wants_accommodation'] 
+        wants_accommodation = args['--wants_accommodation']
         amity.add_person(first_name, last_name, role, wants_accommodation)
 
     # This cmd allows the user to parse arguments for calling create_room function
@@ -116,7 +118,7 @@ class ScreenOut (cmd.Cmd):
     def do_create_room(self, args):
         """Usage: create_room <room_name>..."""
         amity.create_room(args['<room_name>'])
-    
+
     #This cmd syncs the local sqlite database with online firebase database
     def do_sync(self, args):
         """Usage: sync"""
@@ -144,7 +146,7 @@ class ScreenOut (cmd.Cmd):
     def do_load_state(self,args):
         """Usage: load_state <database>"""
         amity.load_state(args['<database>'])
-    
+
     # This cmd allows the user the load_state function
     @docopt_cmd
     def do_update_database(self,args):
@@ -161,7 +163,7 @@ class ScreenOut (cmd.Cmd):
         else:
             filename = args['--o']
             amity.print_allocations(filename)
-    
+
     # This cmd allows the user to call the print_unallocated function
     @docopt_cmd
     def do_print_unallocated(self,args):
@@ -172,13 +174,13 @@ class ScreenOut (cmd.Cmd):
         else:
             filename = args['--o']
             amity.print_unallocated(filename)
-    
+
     #This cmd allows the user to call the load_people function
     @docopt_cmd
     def do_load_people(self,args):
         """Usage: load_people <file_path>"""
         amity.load_people(args['<file_path>'])
-    
+
     #This cmd allows the user to call print_room function
     @docopt_cmd
     def do_print_room(self,args):
