@@ -235,7 +235,8 @@ class Amity(object):
 				allocated_members_string += member
 			room_type = office.room_type
 			capacity = office.capacity
-			office_record = OfficeModel(room_name = room_name, allocated_members = allocated_members_string,
+			office_record = OfficeModel(room_name = room_name, \
+			allocated_members = allocated_members_string,
 						room_type = room_type, capacity = capacity)
 			session.add(office_record)
 			session.commit()
@@ -248,7 +249,8 @@ class Amity(object):
 				allocated_members_string += member
 			room_type = living.room_type
 			capacity = living.capacity
-			living_record = LivingSpaceModel(room_name = room_name, allocated_members = allocated_members_string,
+			living_record = LivingSpaceModel(room_name = room_name, \
+			allocated_members = allocated_members_string,
 						room_type = room_type, capacity = capacity)
 			session.add(living_record)
 			session.commit()
@@ -258,9 +260,10 @@ class Amity(object):
 			wants_accomodation = person.wants_accomodation
 			office_allocated = person.office_allocated
 			living_space_allocated = person.living_space_allocated
-			person_record = PersonModel(name = name, role = role, wants_accomodation = wants_accomodation,
-										office_allocated = office_allocated,
-										living_space_allocated = living_space_allocated)
+			person_record = PersonModel(name = name, role = role, \
+			wants_accomodation = wants_accomodation,
+			office_allocated = office_allocated,
+			living_space_allocated = living_space_allocated)
 			session.add(person_record)
 			session.commit()
 		cprint('Your data has been saved successfully','cyan', attrs=['bold'])
@@ -324,7 +327,8 @@ class Amity(object):
 			return False
 
 	def check_if_office_name_is_valid(self,room):
-		""" This function checks if the an office exists and if it is available for realocation"""
+		""" This function checks if the an office exists and 
+		if it is available for realocation"""
 		self.func_office_available()
 		room_found = False
 		for office in self.available_offices:
@@ -339,7 +343,8 @@ class Amity(object):
 		return False
 
 	def check_if_living_space_name_is_valid(self,room):
-		""" This function checks if the a living space exists and if it is available for realocation"""
+		""" This function checks if the a living space 
+		exists and if it is available for realocation"""
 		self.func_available_living_space()
 		room_found = False
 		for living in self.available_living_space:
@@ -354,7 +359,8 @@ class Amity(object):
 		return False
 
 	def remove_person_from_initial_office(self, person_identifier, current_office):
-		""" This function removes a person from his or her current office before reallocating him or her"""
+		""" This function removes a person from his or her 
+		current office before reallocating him or her"""
 		room_found = False
 		for office in self.all_rooms_office:
 			if current_office == office.room_name:
@@ -369,7 +375,8 @@ class Amity(object):
 			return False
 
 	def remove_person_from_initial_living_space(self, person_identifier, current_living_space):
-		""" This function removes a person from his or her current living space before reallocating him or her """
+		""" This function removes a person from his or her current 
+		living space before reallocating him or her """
 		room_found = False
 		for living in self.all_rooms_living:
 			if current_living_space == living.room_name:
@@ -384,13 +391,15 @@ class Amity(object):
 			return False
 
 	def swap_living_space_members(self,person_identifier,new_room,current_living_space):
-		""" This function swaps a person from his current living space to the new living space """
+		""" This function swaps a person from his current 
+		living space to the new living space """
 		self.func_available_living_space
 		room_found = False
 		for living in self.available_living_space:
 			if new_room == living.room_name:
 				living.allocated_members.append(person_identifier)
-				self.remove_person_from_initial_living_space(person_identifier,current_living_space)
+				self.remove_person_from_initial_living_space \
+				(person_identifier,current_living_space)
 				room_found = True
 				break
 			else:
@@ -511,7 +520,8 @@ class Amity(object):
 				self.available_living_space.append(available_liv)
 
 	def add_person(self, fname,lname, role, wants_accomodation):
-		""" This function creates a person and allocates the a random room depending on the rooms availability
+		""" This function creates a person and allocates 
+		the a random room depending on the rooms availability
 			and the person's role """
 		name = fname + ' ' + lname
 		role = role.upper()
@@ -537,12 +547,14 @@ class Amity(object):
 							return "Please create offices first."
 					else:
 						if len(self.available_offices) == 0:
-							self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							self.add_person_to_all_people \
+							(name, role, wants_accomodation,random_office,random_living_space)
 							cprint(name + ' You have been added to the system but no Office or Living Space was allocated.',\
 								'yellow', attrs=['bold'])
 						else:
 							random_office = random.choice(self.available_offices)
-							self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							self.add_person_to_all_people \
+							(name, role, wants_accomodation,random_office,random_living_space)
 							cprint(name + ' You have been allocated a Office successfully.',\
 								   'yellow', attrs=['bold'])
 				elif wants_accomodation =='Y':
@@ -558,12 +570,14 @@ class Amity(object):
 						return "Please create offices first."
 					else:
 						if len(self.available_offices) == 0:
-							self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							self.add_person_to_all_people \
+							(name, role, wants_accomodation,random_office,random_living_space)
 							cprint(name + ' You have been added to the system but no Office or Living Space was allocated.',\
 									'yellow', attrs=['bold'])
 						else:
 							random_office = random.choice(self.available_offices)
-							self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+							self.add_person_to_all_people \
+							(name, role, wants_accomodation,random_office,random_living_space)
 							cprint(name + ' You have been allocated a Office successfully.', 'yellow', attrs=['bold'])
 				elif wants_accomodation == 'Y':
 					if len(self.all_rooms_office) == 0 or len(self.all_rooms_living) == 0:
@@ -572,23 +586,27 @@ class Amity(object):
 					else:
 						if len(self.available_offices) == 0:
 							if len(self.available_living_space) == 0:
-								self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								self.add_person_to_all_people \
+								(name, role, wants_accomodation,random_office,random_living_space)
 								cprint(name + ' You have been added to the system but no Office or Living Space was allocated.',\
 										'yellow', attrs=['bold'])
 							else:
 								random_living_space = random.choice(self.available_living_space)
-								self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								self.add_person_to_all_people \
+								(name, role, wants_accomodation,random_office,random_living_space)
 								cprint(name + ' You have been added to the system. You were allocated a Living space only.',\
 										'yellow', attrs=['bold'])
 						else:
 							random_office = random.choice(self.available_offices)
 							if len(self.available_living_space) == 0:
-								self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								self.add_person_to_all_people \
+								(name, role, wants_accomodation,random_office,random_living_space)
 								cprint(name + ' You have been allocated a Office successfully. Living space is still unavailable',\
 										'yellow', attrs=['bold'])
 							else:
 								random_living_space = random.choice(self.available_living_space)
-								self.add_person_to_all_people(name, role, wants_accomodation,random_office,random_living_space)
+								self.add_person_to_all_people \
+								(name, role, wants_accomodation,random_office,random_living_space)
 								cprint(name + ' You have been allocated a Office and a Living Space successfully',\
 										'yellow', attrs=['bold'])
 				else:
